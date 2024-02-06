@@ -39,6 +39,29 @@ float getSoftShadowX16() {
     return shadow / 16.0;
 }
 
+float getSoftShadowX4() {
+    float shadow = 0.0;
+    float swidth = 1.5;
+    vec2 offset = mod(floor(gl_FragCoord.xy),2.0) * swidth;
+    shadow += lookup(-1.5 * swidth + offset.x, 1.5 * swidth - offset.y);
+    shadow += lookup(-1.5 * swidth + offset.x, -0.5 * swidth - offset.y);
+    shadow += lookup(0.5 * swidth + offset.x, 1.5 * swidth - offset.y);
+    shadow += lookup(0.5 * swidth + offset.x, -0.5 * swidth - offset.y);
+    return shadow / 4.0;
+}
+
+float getSoftShadowX64() {
+    float shadow = 0.0;
+    float swidth = 0.6;
+    float endp = swidth * 3.0 + swidth / 2.0;
+    for (float y = -endp; y <= endp; y += swidth) {
+        for (float x = -endp; x <= endp; x += swidth) {
+            shadow += lookup(x, y);
+        }
+    }
+    return shadow / 64.0;
+}
+
 float getShadow() {
     float shadow = textureProj(shadowMap, shadowCoord);
     return shadow;
